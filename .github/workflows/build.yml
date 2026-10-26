@@ -14,10 +14,23 @@ jobs:
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
-      
+
+      - name: Create Missing Android Folder
+        run: flutter create . --platforms=android --org com.salaama.school --project-name salaama_school
+
+      - name: Create google-services.json from Secret
+        run: |
+          mkdir -p android/app
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+
       - name: Install dependencies
         run: flutter pub get
-      
+
+      - name: Generate firebase_options.dart
+        run: |
+          dart pub global activate flutterfire_cli
+          flutterfire configure --project=salaama-muslim --platforms=android --yes
+
       - name: Build APK
         run: flutter build apk --release
       
